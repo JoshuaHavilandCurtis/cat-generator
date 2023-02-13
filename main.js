@@ -1,4 +1,4 @@
-const baseUrl = 'https://api.thecatapi.com/v1/images/search';
+const baseUrl = 'https://api.thecatapi.com/v1/images/search?limit=10';
 let btn = document.querySelector('.btn');
 const loader = document.querySelector('#loading');
 
@@ -29,12 +29,27 @@ async function getData() {
 async function renderData() {
     let el = document.querySelector('.info');
     let imgel = document.querySelector('.photo');
+    let imageHtml = '';
+
+    // await data
     let data = await getData();
 
-    // Select array number using []
-    imgel.src = data[0].url;
+    // Loop and store in imagehtml variable
+    for(const value of data) {
+        imageHtml += `
+        <div class="col-6">
+            <div class="render-img" style="background-image: url('${value.url}')" /></div>
+        </div>
+        `;
+
+    }
+
+    document.querySelector('#images .row').innerHTML = imageHtml;
 }
 
+
+
+// Loading 
 
 function displayLoading() {
     loader.classList.add("active");
