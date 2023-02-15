@@ -1,5 +1,12 @@
-const baseUrl = 'https://api.thecatapi.com/v1/images/search?limit=10';
-let btn = document.querySelector('.btn');
+// API Doc https://developers.thecatapi.com/
+const userInput = document.querySelector("#userInput").value;
+
+const baseUrl = 'https://api.thecatapi.com/v1/images/search';
+const limit = '?limit=4';
+const breed = `?breed_ids=${userInput}`;
+const url = `${baseUrl}${limit}`;
+
+let btn = document.querySelector('.randombtn');
 const loader = document.querySelector('#loading');
 
 async function getData() {
@@ -7,7 +14,7 @@ async function getData() {
         // Loader for async await
         displayLoading();
 
-        const response = await fetch(baseUrl, {
+        const response = await fetch(url, {
             headers: {
                 'X-API-KEY': 'live_lVv7VeANlKUzgSmM9zhH5D4cI84nfokyDU7eeJWdbjewBNM0y7l2G0vhc3Jey9Rn',
             },
@@ -47,6 +54,9 @@ async function renderData() {
     document.querySelector('#images .row').innerHTML = imageHtml;
 }
 
+function loadmoreData() {
+    let loadmore = document.querySelector('.loadmore');
+}
 
 
 // Loading 
