@@ -4,18 +4,18 @@ const userInput = document.querySelector("#userInput").value;
 const baseUrl = 'https://api.thecatapi.com/v1/images/search';
 const limit = '?limit=';
 const breed = `?breed_ids=${userInput}`;
+
 const url = `${baseUrl}`;
 
 let btn = document.querySelector('.randombtn');
 const loader = document.querySelector('#loading');
-
 
 async function getData(number) {
     try {
         // Loader for async await
         displayLoading();
 
-        const response = await fetch(url + limit + number, {
+        const response = await fetch(url + limit + number + "&order=ASC", {
             headers: {
                 'X-API-KEY': 'live_lVv7VeANlKUzgSmM9zhH5D4cI84nfokyDU7eeJWdbjewBNM0y7l2G0vhc3Jey9Rn',
             },
@@ -34,45 +34,53 @@ async function getData(number) {
     }
 }
 
-async function renderData() {
-    let el = document.querySelector('.info');
-    let imgel = document.querySelector('.photo');
-    let imageHtml = '';
+let amountOfCatsOnScreen = 0;
 
+
+async function putMoreCatsOnThePage() {
+    
+    
+    amountOfCatsOnScreen = amountOfCatsOnScreen + 5;
+    
     // await data
-    let data = await getData(5);
-
+    let data = await getData(amountOfCatsOnScreen);
+    
     // Loop and store in imagehtml variable
+    const newCatCards = [];
+
     for(const value of data) {
-        imageHtml += `
-        <div class="col-6">
-            <div class="render-img" style="background-image: url('${value.url}')" /></div>
-        </div>
-        `;
+
+        const col = document.createElement("div");
+        col.classList.add("col-6");
+
+        const imgItem = document.createElement("div");
+        imgItem.classList.add("render-img");
+        imgItem.style.backgroundImage = `url('${value.url}')`;
+
+        col.appendChild(imgItem);
+
+        newCatCards.push(col);
     }
 
-    document.querySelector('#images .row').innerHTML = imageHtml;
+    console.log(newCatCards);
+
+    const container = document.querySelector('#images .row');
+
+    //while the cat card container has a 'last child', go in and remove the first child of the container.
+    //this will run until all of the children have been removed!
+    while (container.lastChild !== null) container.removeChild(container.firstChild);
+
+    for (const newCatCard of newCatCards) {
+        container.appendChild(newCatCard);
+    }
+
+    //.innerHTML = imageHtml;
 }
 
+
 let loadmore = document.querySelector('.loadmore');
-loadmore.addEventListener('click', async function () {
-
-    let imageHtml = '';
-
-    // await data
-    let data = await getData(5);
-
-    // Loop and store in imagehtml variable
-    for(const value of data) {
-        imageHtml += `
-        <div class="col-6">
-            <div class="render-img" style="background-image: url('${value.url}')" /></div>
-        </div>
-        `;
-    }
-
-    document.querySelector('#images .row').innerHTML += imageHtml;
-});
+loadmore.addEventListener('click', () => putMoreCatsOnThePage());
+putMoreCatsOnThePage();
 
 
 
@@ -87,6 +95,27 @@ function hideLoading() {
     loader.classList.remove("active")
 }
 
-btn.addEventListener('click', renderData)
+// btn.addEventListener('click', renderData)
 
-renderData();
+// renderData();
+
+
+
+
+
+
+
+
+let delay = 500;
+let timeout = undefined;
+
+// clear existing timeout, then create a new timeout with the given time delay, which when finished, executes the provided function
+const debouceConsoleMessage = () => {
+    if (timeout !== undefined) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        console.log("YES!")
+    }, delay);
+}
+
+const searchBox = document.getElementById("search-box");
+searchBox.addEventListener("input", () => debouceConsoleMessage());
